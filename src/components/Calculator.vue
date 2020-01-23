@@ -12,26 +12,26 @@
             </div>
         </div>
         <div class="buttonBox">
-            <div class="calButton colorLightBlue">AC</div>
-            <div class="calButton colorLightBlue">C</div>
-            <div class="calButton colorLightBlue">%</div>
-            <div class="calButton colorLightBlue">/</div>
-            <div class="calButton colorLightGray">7</div>
-            <div class="calButton colorLightGray">8</div>
-            <div class="calButton colorLightGray">9</div>
-            <div class="calButton colorLightBlue">*</div>
-            <div class="calButton colorLightGray">4</div>
-            <div class="calButton colorLightGray">5</div>
-            <div class="calButton colorLightGray">6</div>
-            <div class="calButton colorLightBlue">-</div>
-            <div class="calButton colorLightGray">1</div>
-            <div class="calButton colorLightGray">2</div>
-            <div class="calButton colorLightGray">3</div>
-            <div class="calButton colorLightBlue">+</div>
-            <div class="calButton colorLightGray">+/-</div>
-            <div class="calButton colorLightGray">0</div>
-            <div class="calButton colorLightGray">.</div>
-            <div class="calButton colorLightBlue">=</div>
+            <button class="calButton colorLightBlue" @click="onCalcKeyPress('AC')">AC</button>
+            <button class="calButton colorLightBlue" @click="onCalcKeyPress('C')">C</button>
+            <button class="calButton colorLightBlue" @click="onCalcKeyPress('%')">%</button>
+            <button class="calButton colorLightBlue" @click="onCalcKeyPress('/')">/</button>
+            <button class="calButton colorLightGray" @click="onCalcKeyPress('7')">7</button>
+            <button class="calButton colorLightGray" @click="onCalcKeyPress('8')">8</button>
+            <button class="calButton colorLightGray" @click="onCalcKeyPress('9')">9</button>
+            <button class="calButton colorLightBlue" @click="onCalcKeyPress('*')">*</button>
+            <button class="calButton colorLightGray" @click="onCalcKeyPress('4')">4</button>
+            <button class="calButton colorLightGray" @click="onCalcKeyPress('4')">5</button>
+            <button class="calButton colorLightGray" @click="onCalcKeyPress('6')">6</button>
+            <button class="calButton colorLightBlue" @click="onCalcKeyPress('-')">-</button>
+            <button class="calButton colorLightGray" @click="onCalcKeyPress('1')">1</button>
+            <button class="calButton colorLightGray" @click="onCalcKeyPress('2')">2</button>
+            <button class="calButton colorLightGray" @click="onCalcKeyPress('3')">3</button>
+            <button class="calButton colorLightBlue" @click="onCalcKeyPress('+')">+</button>
+            <button class="calButton colorLightGray" @click="onCalcKeyPress('+/-')">+/-</button>
+            <button class="calButton colorLightGray" @click="onCalcKeyPress('0')">0</button>
+            <button class="calButton colorLightGray" @click="onCalcKeyPress('.')">.</button>
+            <button class="calButton colorLightBlue" @click="onCalcKeyPress('=')">=</button>
         </div>
      </div>
 </div>
@@ -41,42 +41,62 @@
 export default {
     data(){
         return{
-            expressionString:""
+            expressionString:"",
+            validInputString:"1234567890.%*-+/="
         }
     },
     mounted(){
           window.addEventListener("keypress", e => {
              let pressedKey = String.fromCharCode(e.keyCode);
-             if(pressedKey === "=")
-             {
-                 this.expressionString=eval(this.expressionString).toString();
-             }
-             else
-             {
-                 this.expressionString+=pressedKey;
-             }
+             this.onCalcKeyPress(pressedKey);
           });
            window.addEventListener("keyup", e => {
-           
              if(e.keyCode === 8)
              {
-                 this.expressionString=	this.expressionString.slice(0, -1);
+                this.onCalcKeyPress('C');
              }
           });
     },
     methods:{
-
-        onKeyPress($event)
+        onCalcKeyPress(keyValue)
         {
-            console.log("keyPressed");
-
-            console.log($event);
+           
+            if(keyValue === "AC")
+            {
+                this.expressionString="";
+            }
+            else if(keyValue === "C")
+            {
+                 this.expressionString=	this.expressionString.slice(0, -1);
+            }
+            else if(keyValue === "+/-")
+            {
+                console.log("need to fix this");
+            }
+            else if(keyValue === "=")
+            {
+                this.expressionString=eval(this.expressionString).toString();
+            }
+            else
+            {
+                if (this.validInputString.indexOf(keyValue) === -1)
+                {
+                    return;
+                }
+                this.expressionString+=keyValue;
+            }
         }
     }
 }
 </script>
 
 <style scoped>
+button{
+    cursor: pointer;
+}
+button:focus {
+    outline: #6186b3 auto 5px; 
+}
 .tempBackgroundBox{
     width:336px;
     height: 416px;
@@ -143,8 +163,9 @@ export default {
     height: 18%;
     text-align: center;
     border-radius: 5px;
-    line-height: 52px;
+    line-height: 48px;
     font-size: 20px;
+    border:0px;
 }
 .colorLightBlue
 {
