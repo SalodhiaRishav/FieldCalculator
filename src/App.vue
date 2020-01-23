@@ -1,17 +1,25 @@
 <template>
   <div id="app">
-    <Calculator msg="Welcome to Your Vue.js App"/>
+    <CalculatorInput/>
   </div>
 </template>
 
 <script>
-import Calculator from './components/Calculator.vue'
+import CalculatorInput from './components/CalculatorInput.vue'
+
 
 export default {
   name: 'app',
   components: {
-    Calculator
+    CalculatorInput
   }
 }
 </script>
+
+<style scoped>
+#app{
+    width:100%;
+    height: 100%;
+}
+</style>
 
