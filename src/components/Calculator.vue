@@ -12,26 +12,26 @@
             </div>
         </div>
         <div class="buttonBox">
-            <button class="calButton colorLightBlue" @click="onCalcKeyPress('AC')">AC</button>
-            <button class="calButton colorLightBlue" @click="onCalcKeyPress('C')">C</button>
-            <button class="calButton colorLightBlue" @click="onCalcKeyPress('%')">%</button>
-            <button class="calButton colorLightBlue" @click="onCalcKeyPress('/')">/</button>
-            <button class="calButton colorLightGray" @click="onCalcKeyPress('7')">7</button>
-            <button class="calButton colorLightGray" @click="onCalcKeyPress('8')">8</button>
-            <button class="calButton colorLightGray" @click="onCalcKeyPress('9')">9</button>
-            <button class="calButton colorLightBlue" @click="onCalcKeyPress('*')">*</button>
-            <button class="calButton colorLightGray" @click="onCalcKeyPress('4')">4</button>
-            <button class="calButton colorLightGray" @click="onCalcKeyPress('4')">5</button>
-            <button class="calButton colorLightGray" @click="onCalcKeyPress('6')">6</button>
-            <button class="calButton colorLightBlue" @click="onCalcKeyPress('-')">-</button>
-            <button class="calButton colorLightGray" @click="onCalcKeyPress('1')">1</button>
-            <button class="calButton colorLightGray" @click="onCalcKeyPress('2')">2</button>
-            <button class="calButton colorLightGray" @click="onCalcKeyPress('3')">3</button>
-            <button class="calButton colorLightBlue" @click="onCalcKeyPress('+')">+</button>
-            <button class="calButton colorLightGray" @click="onCalcKeyPress('+/-')">+/-</button>
-            <button class="calButton colorLightGray" @click="onCalcKeyPress('0')">0</button>
-            <button class="calButton colorLightGray" @click="onCalcKeyPress('.')">.</button>
-            <button class="calButton colorLightBlue" @click="onCalcKeyPress('=')">=</button>
+            <button class="calButton colorLightBlue" @click="onCalcKeyPress($event,'AC')">AC</button>
+            <button class="calButton colorLightBlue" @click="onCalcKeyPress($event,'C')">C</button>
+            <button class="calButton colorLightBlue" @click="onCalcKeyPress($event,'%')">%</button>
+            <button class="calButton colorLightBlue" @click="onCalcKeyPress($event,'/')">/</button>
+            <button class="calButton colorLightGray" @click="onCalcKeyPress($event,'7')">7</button>
+            <button class="calButton colorLightGray" @click="onCalcKeyPress($event,'8')">8</button>
+            <button class="calButton colorLightGray" @click="onCalcKeyPress($event,'9')">9</button>
+            <button class="calButton colorLightBlue" @click="onCalcKeyPress($event,'*')">*</button>
+            <button class="calButton colorLightGray" @click="onCalcKeyPress($event,'4')">4</button>
+            <button class="calButton colorLightGray" @click="onCalcKeyPress($event,'4')">5</button>
+            <button class="calButton colorLightGray" @click="onCalcKeyPress($event,'6')">6</button>
+            <button class="calButton colorLightBlue" @click="onCalcKeyPress($event,'-')">-</button>
+            <button class="calButton colorLightGray" @click="onCalcKeyPress($event,'1')">1</button>
+            <button class="calButton colorLightGray" @click="onCalcKeyPress($event,'2')">2</button>
+            <button class="calButton colorLightGray" @click="onCalcKeyPress($event,'3')">3</button>
+            <button class="calButton colorLightBlue" @click="onCalcKeyPress($event,'+')">+</button>
+            <button class="calButton colorLightGray" @click="onCalcKeyPress($event,'+/-')">+/-</button>
+            <button class="calButton colorLightGray" @click="onCalcKeyPress($event,'0')">0</button>
+            <button class="calButton colorLightGray" @click="onCalcKeyPress($event,'.')">.</button>
+            <button class="calButton colorLightBlue" @click="onCalcKeyPress($event,'=')">=</button>
         </div>
      </div>
 </div>
@@ -39,28 +39,44 @@
 
 <script>
 export default {
+    props:['defaultResultValue'],
     data(){
         return{
-            expressionString:"",
-            validInputString:"1234567890.%*-+/="
+            expressionString:this.defaultResultValue,
+            validInputString:"1234567890.%*-+/=",
+            operatorString:".%*-+/",
+            resultOperatorString:"%*+/"
         }
     },
     mounted(){
-          window.addEventListener("keypress", e => {
+        // const acButton=this.$refs.acButton;
+        // acButton.focus();
+        // acButton.click();
+        window
+        .addEventListener("keypress", e => {
              let pressedKey = String.fromCharCode(e.keyCode);
-             this.onCalcKeyPress(pressedKey);
+             this.onCalcKeyPress(null,pressedKey);
+
           });
-           window.addEventListener("keyup", e => {
-             if(e.keyCode === 8)
+
+            window.addEventListener("keyup", e => {
+            if(e.keyCode === 8)
              {
-                this.onCalcKeyPress('C');
+                this.onCalcKeyPress(null,'C');
+             }
+            if(e.keyCode === 13)
+             {
+                this.onCalcKeyPress(null,'Enter');
              }
           });
     },
     methods:{
-        onCalcKeyPress(keyValue)
+        onCalcKeyPress(e,keyValue)
         {
-           
+            if(e !==null)
+            {
+                e.target.blur();
+            }
             if(keyValue === "AC")
             {
                 this.expressionString="";
@@ -71,17 +87,39 @@ export default {
             }
             else if(keyValue === "+/-")
             {
-                console.log("need to fix this");
+                if(isNaN(this.expressionString)){
+                    return;
+                }
+                const expression = this.expressionString +" * -1";
+                this.expressionString=eval(expression).toString();
             }
             else if(keyValue === "=")
             {
                 this.expressionString=eval(this.expressionString).toString();
+            }
+            else if(keyValue === "Enter")
+            {
+                if(isNaN(this.expressionString)){
+                    return;
+                }
+               this.$emit('calcEnterPressed',{result:this.expressionString});
+
             }
             else
             {
                 if (this.validInputString.indexOf(keyValue) === -1)
                 {
                     return;
+                }
+                
+                if(this.operatorString.indexOf(keyValue) > -1)
+                {
+                    
+                    let lastCharacter = this.expressionString[this.expressionString.length-1];
+                    if(this.operatorString.indexOf(lastCharacter) > -1)
+                    {
+                        return;
+                    }
                 }
                 this.expressionString+=keyValue;
             }
@@ -119,7 +157,6 @@ button:focus {
     background-color: #D8EFFF;
     margin-top:8px;
     margin-bottom:8px;
-
 
     display:flex;
     flex-direction: column;
