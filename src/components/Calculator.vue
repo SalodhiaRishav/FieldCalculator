@@ -52,8 +52,7 @@ export default {
         // const acButton=this.$refs.acButton;
         // acButton.focus();
         // acButton.click();
-        window
-        .addEventListener("keypress", e => {
+        window.addEventListener("keypress", e => {
              let pressedKey = String.fromCharCode(e.keyCode);
              this.onCalcKeyPress(null,pressedKey);
 
@@ -91,11 +90,11 @@ export default {
                     return;
                 }
                 const expression = this.expressionString +" * -1";
-                this.expressionString=eval(expression).toString();
+                this.expressionString=this.$mathjs.evaluate(expression).toString();
             }
             else if(keyValue === "=")
             {
-                this.expressionString=eval(this.expressionString).toString();
+                this.expressionString=this.$mathjs.evaluate(this.expressionString).toString();
             }
             else if(keyValue === "Enter")
             {

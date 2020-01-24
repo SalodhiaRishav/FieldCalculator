@@ -1,7 +1,7 @@
 <template>
 <div>
     <div  v-bind:class="{ someBlur: blurInput }" class="input-container" >
-    <input class="input-field" type="text" v-model="inputFieldValue">
+    <input class="input-field" type="text" v-model="inputFieldValue" :disabled="showCalculator">
     <i class="fa fa-calculator icon" @click="onClickCalculatorIcon"></i>
   </div>
   <br>
