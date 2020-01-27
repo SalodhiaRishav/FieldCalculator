@@ -1,14 +1,16 @@
 <template>
 <div>
     <div  v-bind:class="{ someBlur: blurInput }" class="input-container" >
-    <input class="input-field" type="text" v-model="inputFieldValue"
-     :class="{ 'redBorderOnFocus': !isValidExpression, 'greenBorderOnFocus': isValidExpression }"
-     :disabled="showCalculator"
-     @keyup ="onEnterPressed">
-    <i class="fa fa-calculator icon" @click="onClickCalculatorIcon"></i>
-  </div>
-  <br>
-  <calculator v-if="showCalculator" :defaultResultValue="calculatorValue"  @calcEnterPressed="onCalcEnterPressed"></calculator>
+        <input class="input-field" type="text" v-model="inputFieldValue"
+        :class="{ 'redBorderOnFocus': !isValidExpression, 'greenBorderOnFocus': isValidExpression }"
+        :disabled="showCalculator"
+        @keyup ="onEnterPressed">
+        <i class="fa fa-calculator icon" @click="onClickCalculatorIcon"></i>
+        <div  v-if="showCalculator" class="modal">
+                <calculator class="modal-content" :defaultResultValue="calculatorValue" @closeBtnClicked="closeCalc" @calcEnterPressed="onCalcEnterPressed"></calculator>
+        </div>
+    </div>
+         
 </div>
 </template>
 
@@ -76,6 +78,11 @@ export default {
         }
     },
     methods:{
+        
+        closeCalc()
+        {
+            this.showCalculator=false;
+        },
         onEnterPressed(e)
         {
             if(e.keyCode === 13)
@@ -92,13 +99,11 @@ export default {
         },
         onCalcEnterPressed(e){
             this.inputFieldValue = e.result;
-            this.blurInput=false;
             this.showCalculator=false;
         },
         onClickCalculatorIcon()
         {
-            this.blurInput=!this.showCalculator;
-            this.showCalculator= !this.showCalculator;
+            this.showCalculator= true;
         },
        
     }
@@ -110,6 +115,42 @@ export default {
 <style scoped>
 body {font-family: Arial, Helvetica, sans-serif;}
 * {box-sizing: border-box;}
+
+.modal {
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content/Box */
+.modal-content {
+  background-color: #fefefe;
+  position:absolute;
+  top:10px;
+  left:320px;
+  border: 1px solid #888;
+}
+
+/* The Close Button */
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
 
 .someBlur{
 filter: blur(1px);

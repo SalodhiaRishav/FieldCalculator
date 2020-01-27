@@ -3,10 +3,10 @@
      <div class="calculatorBox">
         <div class="resultBox">
             <div class="memoryBox">
-
+                 <span class="closeCalcBtn" @click="onCloseCalcBtn">&times;</span>
             </div>
             <div class="expressionBox">
-                <div type="text" class="expressionInputBox">
+                <div type="text" class="expressionInputBox" :class="{'afterInputLimit':showSmallFont,'beforeInputLimit':!showSmallFont}">
                     {{expressionString}}
                 </div>
             </div>
@@ -42,16 +42,25 @@ export default {
     props:['defaultResultValue'],
     data(){
         return{
+            maxCharAllowedInCalcInput:27,
+            maxCharLimitForBigFont:14,
             expressionString:this.defaultResultValue,
             validInputString:"1234567890.%*-+/=",
             operatorString:".%*-+/",
             resultOperatorString:"%*+/"
         }
     },
+    computed:{
+        showSmallFont (){
+            const stringLength = this.expressionString.length;
+            if(stringLength > this.maxCharLimitForBigFont)
+            {
+                return true;
+            }
+            return false;
+        }
+    },
     mounted(){
-        // const acButton=this.$refs.acButton;
-        // acButton.focus();
-        // acButton.click();
         window.addEventListener("keypress", e => {
              let pressedKey = String.fromCharCode(e.keyCode);
              this.onCalcKeyPress(null,pressedKey);
@@ -70,8 +79,12 @@ export default {
           });
     },
     methods:{
+        onCloseCalcBtn(){
+            this.$emit("closeBtnClicked")
+        },
         onCalcKeyPress(e,keyValue)
         {
+           
             if(e !==null)
             {
                 e.target.blur();
@@ -106,6 +119,10 @@ export default {
             }
             else
             {
+                if(this.expressionString.length > this.maxCharAllowedInCalcInput)
+                {
+                    return ;
+                }
                 if (this.validInputString.indexOf(keyValue) === -1)
                 {
                     return;
@@ -128,6 +145,10 @@ export default {
 </script>
 
 <style scoped>
+.closeCalcBtn{
+    float:right;
+    cursor: pointer;
+}
 button{
     cursor: pointer;
 }
@@ -172,6 +193,16 @@ button:focus {
     height:67%;
     background-color: #FFFFFF;
 }
+
+.beforeInputLimit{
+    font-size:28px;
+    line-height: 320%;
+}
+
+.afterInputLimit{
+    font-size:20px;
+    line-height: 500%;
+}
 .expressionInputBox{
     width:100%;
     height:100%;
@@ -181,8 +212,6 @@ button:focus {
     border-left:0px;
     background-color: #FFFFFF;
     text-align: right; 
-    font-size:28px;
-    line-height: 320%;
 }
 .buttonBox{
     width:90%;

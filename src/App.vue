@@ -1,5 +1,9 @@
 <template>
   <div id="app">
+
+    Calculation A
+    <CalculatorInput/>
+    Calculation B
     <CalculatorInput/>
   </div>
 </template>
