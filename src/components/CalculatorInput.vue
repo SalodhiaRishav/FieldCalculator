@@ -8,7 +8,7 @@
     <i class="fa fa-calculator icon" @click="onClickCalculatorIcon"></i>
   </div>
   <br>
-  <calculator v-if="showCalculator" :defaultResultValue="inputFieldValue"  @calcEnterPressed="onCalcEnterPressed"></calculator>
+  <calculator v-if="showCalculator" :defaultResultValue="calculatorValue"  @calcEnterPressed="onCalcEnterPressed"></calculator>
 </div>
 </template>
 
@@ -27,6 +27,15 @@ export default {
             inputFieldValue:"",
             showCalculator:false,
             isValidExpression:true
+        }
+    },
+    computed:{
+        calculatorValue (){
+            if(this.inputFieldValue[0] === "=")
+            {
+                return this.inputFieldValue.substring(1);
+            }
+            return this.inputFieldValue;
         }
     },
     watch: {
