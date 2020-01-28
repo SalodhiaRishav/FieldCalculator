@@ -3,7 +3,9 @@ import App from './App.vue'
 
 import { create, all } from 'mathjs'
 
-const config = { }
+const config = {
+  number: 'BigNumber',     
+  precision: 64 }
 const math = create(all, config)
 
 Vue.config.productionTip = false

@@ -48,6 +48,10 @@ export default {
             {
                return;
             }
+            if(val.length > 27)
+            {
+                this.inputFieldValue =	this.inputFieldValue.slice(0, -1);
+            }
             const enteredCharacter =  val[val.length-1];
             
             if (this.validInputString.indexOf(enteredCharacter) === -1)
@@ -70,18 +74,14 @@ export default {
             if( enteredCharacter === "=" && this.inputFieldValue.length !== 1)
             {
                  this.inputFieldValue =	this.inputFieldValue.slice(0, -1);
-                 
-                 if(this.inputFieldValue[0] !== "=")
-                 {
-                    const expressionToEvaluate=this.inputFieldValue.replace(',','.');
-                    this.inputFieldValue="="+this.$mathjs.evaluate(expressionToEvaluate).toString();
-                 }
-                 else
-                 {
-                    const expressionToEvaluate = this.inputFieldValue.substring(1).replace(',','.');
-                    this.inputFieldValue="="+this.$mathjs.evaluate(expressionToEvaluate).toString();
-                 }
             }
+
+            //to be discussed
+
+            // if( enteredCharacter === "=" && this.inputFieldValue[0]!== '=')
+            // {
+            //      this.inputFieldValue =	"="+this.inputFieldValue;
+            // }
         }
     },
     methods:{
@@ -92,14 +92,23 @@ export default {
 
         showCalculationResult()
         {
-            const finalResult = this.inputFieldValue.substring(1);
-            if(isNaN(finalResult)){
+            if(this.inputFieldValue[0] !== "=")
+            {
                 return;
             }
-            if(this.inputFieldValue[0] ==="=")
+            else
             {
-                this.inputFieldValue = finalResult;
+                const expressionToEvaluate = this.inputFieldValue.substring(1).replace(',','.');
+                this.inputFieldValue=this.$mathjs.evaluate(expressionToEvaluate).toString();
             }
+            // const finalResult = this.inputFieldValue.substring(1);
+            // if(isNaN(finalResult)){
+            //     return;
+            // }
+            // if(this.inputFieldValue[0] ==="=")
+            // {
+            //     this.inputFieldValue = finalResult;
+            // }
         },
 
         onCalcEnterPressed(e){
