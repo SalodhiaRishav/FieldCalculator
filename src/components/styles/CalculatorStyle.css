@@ -1,0 +1,101 @@
+.calculatorBox{
+    width:320px;
+    height: 400px;
+    background-color: #FFFFFF;
+    padding-left:16px;
+    padding-right: 16px;
+    padding-top:8px;
+    padding-bottom: 8px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.resultBox{
+    width:100%;
+    height:25%;
+    margin-bottom: 8px;
+    background-color: #FFFFFF;
+
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.buttonBox{
+    width:100%;
+    height:75%;
+
+    display:flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.memoryBox{
+    width:100%;
+    height:25%;
+}
+
+.expressionBox{
+    width:100%;
+    height:75%;
+}
+
+.closeCalcBtn{
+    float:right;
+    cursor: pointer;
+    color:red;
+}
+
+.expressionInputBox{
+    width:100%;
+    height:100%;
+    border-top:0px;
+    border-right:0px;
+    border-bottom: 1px solid black;
+    border-left:0px;
+    text-align: right; 
+}
+
+.beforeInputLimit{
+    font-size:28px;
+    line-height: 320%;
+}
+
+.afterInputLimit{
+    font-size:20px;
+    line-height: 500%;
+}
+
+.buttonDiv{
+    width: 21%;
+    height: 18%;
+}
+
+.calButton{
+    width:100%;
+    height: 100%;
+    text-align: center;
+    border-radius: 5px;
+    line-height: 48px;
+    font-size: 20px;
+    border:0px;
+}
+.colorLightBlue
+{
+    background-color: #D8EFFF;
+    color:#4a86b3;;
+}
+
+.colorLightGray{
+    background-color: #F3F8FC;
+    color:#4d498c;
+}
+
+button{
+    cursor: pointer;
+}
+button:focus {
+    outline: #6186b3 auto 5px; 
+}

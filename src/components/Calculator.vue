@@ -1,47 +1,32 @@
 <template>
-<div class="tempBackgroundBox">
-     <div class="calculatorBox">
+    <div class="calculatorBox">
         <div class="resultBox">
             <div class="memoryBox">
-                 <span class="closeCalcBtn" @click="onCloseCalcBtn">&times;</span>
+                 <span class="closeCalcBtn" @click="closeCalc">&times;</span>
             </div>
             <div class="expressionBox">
-                <div type="text" class="expressionInputBox" :class="{'afterInputLimit':showSmallFont,'beforeInputLimit':!showSmallFont}">
+                <div class="expressionInputBox" :class="{'afterInputLimit':showSmallFont,'beforeInputLimit':!showSmallFont}">
                     {{expressionString}}
                 </div>
             </div>
         </div>
         <div class="buttonBox">
-            <button class="calButton colorLightBlue" @click="onCalcKeyPress($event,'AC')">AC</button>
-            <button class="calButton colorLightBlue" @click="onCalcKeyPress($event,'C')">C</button>
-            <button class="calButton colorLightBlue" @click="onCalcKeyPress($event,'%')">%</button>
-            <button class="calButton colorLightBlue" @click="onCalcKeyPress($event,'/')">/</button>
-            <button class="calButton colorLightGray" @click="onCalcKeyPress($event,'7')">7</button>
-            <button class="calButton colorLightGray" @click="onCalcKeyPress($event,'8')">8</button>
-            <button class="calButton colorLightGray" @click="onCalcKeyPress($event,'9')">9</button>
-            <button class="calButton colorLightBlue" @click="onCalcKeyPress($event,'*')">*</button>
-            <button class="calButton colorLightGray" @click="onCalcKeyPress($event,'4')">4</button>
-            <button class="calButton colorLightGray" @click="onCalcKeyPress($event,'4')">5</button>
-            <button class="calButton colorLightGray" @click="onCalcKeyPress($event,'6')">6</button>
-            <button class="calButton colorLightBlue" @click="onCalcKeyPress($event,'-')">-</button>
-            <button class="calButton colorLightGray" @click="onCalcKeyPress($event,'1')">1</button>
-            <button class="calButton colorLightGray" @click="onCalcKeyPress($event,'2')">2</button>
-            <button class="calButton colorLightGray" @click="onCalcKeyPress($event,'3')">3</button>
-            <button class="calButton colorLightBlue" @click="onCalcKeyPress($event,'+')">+</button>
-            <button class="calButton colorLightGray" @click="onCalcKeyPress($event,'+/-')">+/-</button>
-            <button class="calButton colorLightGray" @click="onCalcKeyPress($event,'0')">0</button>
-            <button class="calButton colorLightGray" @click="onCalcKeyPress($event,'.')">.</button>
-            <button class="calButton colorLightBlue" @click="onCalcKeyPress($event,'=')">=</button>
+            <div v-for="button in buttons" class="buttonDiv" :key="button.key">
+                <button :class="'calButton '+ button.color" @click="onCalcKeyPress($event,button.key)">{{button.value}}</button>
+            </div>
         </div>
-     </div>
-</div>
+    </div>
 </template>
 
 <script>
+import buttons from "./resources/buttons.js";
+
 export default {
     props:['defaultResultValue'],
+
     data(){
         return{
+            buttons:buttons,
             maxCharAllowedInCalcInput:27,
             maxCharLimitForBigFont:14,
             expressionString:this.defaultResultValue,
@@ -50,198 +35,118 @@ export default {
             resultOperatorString:"%*+/"
         }
     },
+
     computed:{
         showSmallFont (){
-            const stringLength = this.expressionString.length;
-            if(stringLength > this.maxCharLimitForBigFont)
+            const expressionLength = this.expressionString.length;
+            if(expressionLength > this.maxCharLimitForBigFont)
             {
                 return true;
             }
             return false;
         }
     },
+
     mounted(){
         window.addEventListener("keypress", e => {
-             let pressedKey = String.fromCharCode(e.keyCode);
-             this.onCalcKeyPress(null,pressedKey);
+            const pressedKey = String.fromCharCode(e.keyCode);
+            this.onCalcKeyPress(null,pressedKey);
+        });
 
-          });
-
-            window.addEventListener("keyup", e => {
+        //for backspace and enter bcz keypress don't allow these keys
+        window.addEventListener("keyup", e => {
             if(e.keyCode === 8)
-             {
+            {
                 this.onCalcKeyPress(null,'C');
-             }
+            }
             if(e.keyCode === 13)
-             {
+            {
                 this.onCalcKeyPress(null,'Enter');
-             }
-          });
+            }
+        });
     },
+
     methods:{
-        onCloseCalcBtn(){
+        closeCalc(){
             this.$emit("closeBtnClicked")
         },
+
         onCalcKeyPress(e,keyValue)
         {
-           
             if(e !==null)
             {
                 e.target.blur();
             }
-            if(keyValue === "AC")
-            {
-                this.expressionString="";
-            }
-            else if(keyValue === "C")
-            {
-                 this.expressionString=	this.expressionString.slice(0, -1);
-            }
-            else if(keyValue === "+/-")
-            {
-                if(isNaN(this.expressionString)){
-                    return;
-                }
-                const expression = this.expressionString +" * -1";
-                this.expressionString=this.$mathjs.evaluate(expression).toString();
-            }
-            else if(keyValue === "=")
-            {
-                this.expressionString=this.$mathjs.evaluate(this.expressionString).toString();
-            }
-            else if(keyValue === "Enter")
-            {
-                if(isNaN(this.expressionString)){
-                    return;
-                }
-               this.$emit('calcEnterPressed',{result:this.expressionString});
 
-            }
-            else
-            {
-                if(this.expressionString.length > this.maxCharAllowedInCalcInput)
-                {
-                    return ;
-                }
-                if (this.validInputString.indexOf(keyValue) === -1)
-                {
-                    return;
-                }
-                
-                if(this.operatorString.indexOf(keyValue) > -1)
-                {
-                    
-                    let lastCharacter = this.expressionString[this.expressionString.length-1];
-                    if(this.operatorString.indexOf(lastCharacter) > -1)
+            switch (keyValue) {
+                case 'AC':
+                    this.expressionString="";
+                    break;
+
+                case 'C':
+                    this.expressionString=	this.expressionString.slice(0, -1);
+                    break;
+
+                case '+/-':
                     {
-                        return;
+                        if(isNaN(this.expressionString)){
+                          return;
+                        }
+                        const expression = this.expressionString.replace(",",".") +" * -1";
+                        this.expressionString=this.$mathjs.evaluate(expression).toString();
                     }
-                }
-                this.expressionString+=keyValue;
+                    break;
+
+                case '=':
+                    {
+                        const expressionToEvaluate=this.expressionString.replace(",",".");
+                        this.expressionString=this.$mathjs.evaluate(expressionToEvaluate).toString();
+                    }
+                    break;
+
+                case 'Enter':
+                    {
+                        if(isNaN(this.expressionString)){
+                            return;
+                        }
+                        this.$emit('calcEnterPressed',{result:this.expressionString});
+                    }
+                    break;
+
+                default :
+                    {
+                        if(this.expressionString.length > this.maxCharAllowedInCalcInput)
+                        {
+                            return ;
+                        }
+
+                        if (this.validInputString.indexOf(keyValue) === -1)
+                        {
+                            return;
+                        }
+                        
+                        if(this.operatorString.indexOf(keyValue) > -1)
+                        {
+                            const lastCharacter = this.expressionString[this.expressionString.length-1];
+                            if(this.operatorString.indexOf(lastCharacter) > -1)
+                            {
+                                return;
+                            }
+                            if(this.expressionString.length === 0
+                              &&
+                              this.resultOperatorString.indexOf(keyValue) > -1)
+                            {
+                               return;   
+                            }
+                        }
+                        this.expressionString+=keyValue;
+                    }
             }
-        }
+        },
     }
 }
 </script>
 
-<style scoped>
-.closeCalcBtn{
-    float:right;
-    cursor: pointer;
-}
-button{
-    cursor: pointer;
-}
-button:focus {
-    outline: #6186b3 auto 5px; 
-}
-.tempBackgroundBox{
-    width:336px;
-    height: 416px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #319CF1;
-}
-.calculatorBox{
-    display: flex;
-    width:320px;
-    height: 400px;
-    flex-direction: column;
-    align-items: center;
-    background-color: #FFFFFF;
-}
-.resultBox{
-    width:90%;
-    height:25%;
-    background-color: #D8EFFF;
-    margin-top:8px;
-    margin-bottom:8px;
-
-    display:flex;
-    flex-direction: column;
-    align-items: center;
-}
-.memoryBox
-{
-    width:100%;
-    height:33%;
-    background-color: #FFFFFF;
-}
-.expressionBox{
-    width:100%;
-    height:67%;
-    background-color: #FFFFFF;
-}
-
-.beforeInputLimit{
-    font-size:28px;
-    line-height: 320%;
-}
-
-.afterInputLimit{
-    font-size:20px;
-    line-height: 500%;
-}
-.expressionInputBox{
-    width:100%;
-    height:100%;
-    border-top:0px;
-    border-right:0px;
-    border-bottom: 1px solid black;
-    border-left:0px;
-    background-color: #FFFFFF;
-    text-align: right; 
-}
-.buttonBox{
-    width:90%;
-    height:75%;
-    margin-bottom:8px;
-
-    display:flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-}
-
-.calButton{
-    width: 21%;
-    height: 18%;
-    text-align: center;
-    border-radius: 5px;
-    line-height: 48px;
-    font-size: 20px;
-    border:0px;
-}
-.colorLightBlue
-{
-    background-color: #D8EFFF;
-    color:#4a86b3;;
-}
-
-.colorLightGray{
-    background-color: #F3F8FC;
-    color:#4d498c;
-}
-
-
+<style>
+@import url('./styles/CalculatorStyle.css');
 </style>
