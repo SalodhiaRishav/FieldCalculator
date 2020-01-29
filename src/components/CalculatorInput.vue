@@ -13,9 +13,11 @@
                 :disabled="showCalculator"
                 @keyup.enter ="showCalculationResult">
         <i class="fa fa-calculator icon" @click="openCalculator"></i>
+          <!-- <calculator v-if="showCalculator" class="popuptext" :defaultResultValue="calculatorValue" @closeBtnClicked="closeCalc" @calcEnterPressed="onCalcEnterPressed"></calculator> -->
+
 
        <div  v-if="showCalculator" class="modal" :style="'z-index:'+zIndex+';'"> 
-          <calculator class="modal-content" :defaultResultValue="calculatorValue" @closeBtnClicked="closeCalc" @calcEnterPressed="onCalcEnterPressed"></calculator>
+          <calculator class="modal-content" :style="'top : '+modelContentY+';left: '+modelContentX+';'" :defaultResultValue="calculatorValue" @closeBtnClicked="closeCalc" @calcEnterPressed="onCalcEnterPressed"></calculator>
         </div>
     </div>
 
@@ -36,7 +38,9 @@ export default {
             validInputString:"1234567890.,%*-+/=",
             operatorString:".,%*-+/",
             showCalculator:false,
-            inputFieldValue:this.value
+            inputFieldValue:this.value,
+            modelContentX:0,
+            modelContentY:0,
         }
     },
     mounted(){
@@ -147,8 +151,11 @@ export default {
             this.showCalculator=false;
         },
 
-        openCalculator()
+        openCalculator(e)
         {
+            console.log(`x : ${e.x} y : ${e.y}`);
+            this.modelContentX=e.x+"px";
+            this.modelContentY=e.y+"px";
             this.showCalculator= true;
         },
     }

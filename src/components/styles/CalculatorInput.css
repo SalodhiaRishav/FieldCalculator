@@ -33,9 +33,14 @@
 .modal-content {
   border:1px solid black;
   position: relative;
-  top:26%;
-  left:42%;
+  
 }
 
-
+.popuptext {
+  border :1px solid black;
+  position: absolute;
+  z-index: 1;
+  top: 10%;
+  left: 103%;
+}
 
