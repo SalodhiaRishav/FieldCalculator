@@ -4,9 +4,13 @@
         {{label}}
     </div>
     <div class="input-container" >
-        <input class="input-field"
+        <input  class="input-field"
                 type="text"
-                v-model="inputFieldValue"
+                v-bind:value="inputFieldValue"
+                v-on:input="onInput"
+                @focus="isFieldFocused = true"
+                @blur="isFieldFocused = false"
+                :disabled="showCalculator"
                 @keyup.enter ="showCalculationResult">
         <i class="fa fa-calculator icon" @click="openCalculator"></i>
 
@@ -22,18 +26,29 @@
 import Calculator from './Calculator.vue'
 
 export default {
+    props: ['label','value','zIndex'],
     components:{
         Calculator,
     },
     data(){
         return{
-            label:"Calculation",
-            zIndex:1,
+            isFieldFocused:false,
             validInputString:"1234567890.,%*-+/=",
             operatorString:".,%*-+/",
-            inputFieldValue:"",
             showCalculator:false,
+            inputFieldValue:this.value
         }
+    },
+    mounted(){
+         window.addEventListener("keyup", e => {
+            if(!this.isFieldFocused)
+            {
+                return;
+            }
+            if (e.altKey && e.which == 67){
+                this.showCalculator=true;
+            }
+        });
     },
     computed:{
         calculatorValue (){
@@ -84,9 +99,13 @@ export default {
             // {
             //      this.inputFieldValue =	"="+this.inputFieldValue;
             // }
+            this.$emit('input', this.inputFieldValue);
         }
     },
     methods:{
+        onInput(e){
+            this.inputFieldValue=e.target.value;
+        },
         closeCalc()
         {
             this.showCalculator=false;
@@ -100,6 +119,16 @@ export default {
             }
             else
             {
+                if(this.inputFieldValue.length<=1)
+                {
+                    return;
+                }
+                const lastChar=this.inputFieldValue[this.inputFieldValue.length-1];
+
+                if(this.operatorString.indexOf(lastChar)>-1)
+                {
+                    return;
+                }
                 const expressionToEvaluate = this.inputFieldValue.substring(1).replace(',','.');
                 this.inputFieldValue=this.$mathjs.evaluate(expressionToEvaluate).toString();
             }

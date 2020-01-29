@@ -5,7 +5,7 @@ import { create, all } from 'mathjs'
 
 const config = {
   number: 'BigNumber',     
-  precision: 64 }
+  precision: 5 }
 const math = create(all, config)
 
 Vue.config.productionTip = false

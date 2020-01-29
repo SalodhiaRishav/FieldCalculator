@@ -63,6 +63,9 @@ export default {
             {
                 this.onCalcKeyPress(null,'Enter');
             }
+            if(e.shiftKey&&e.which==83){
+                this.onCalcKeyPress(null,'Enter');
+            }
         });
     },
 
@@ -99,6 +102,16 @@ export default {
 
                 case '=':
                     {
+                        if(this.expressionString.length <=1)
+                        {
+                            return;
+                        }
+
+                        const lastChar=this.expressionString[this.expressionString.length-1];
+                        if(this.operatorString.indexOf(lastChar)>-1)
+                        {
+                            return;
+                        }
                         const expressionToEvaluate=this.expressionString.replace(",",".");
                         this.expressionString=this.$mathjs.evaluate(expressionToEvaluate).toString();
                     }
