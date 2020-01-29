@@ -9,10 +9,12 @@
                 v-model="inputFieldValue"
                 @keyup.enter ="showCalculationResult">
         <i class="fa fa-calculator icon" @click="openCalculator"></i>
-        <div  v-if="showCalculator" class="modal" :style="'z-index:'+zIndex+';'">
-            <calculator class="modal-content" :defaultResultValue="calculatorValue" @closeBtnClicked="closeCalc" @calcEnterPressed="onCalcEnterPressed"></calculator>
+
+       <div  v-if="showCalculator" class="modal" :style="'z-index:'+zIndex+';'"> 
+          <calculator class="modal-content" :defaultResultValue="calculatorValue" @closeBtnClicked="closeCalc" @calcEnterPressed="onCalcEnterPressed"></calculator>
         </div>
     </div>
+
 </div>
 </template>
 

@@ -6,7 +6,7 @@
             </div>
             <div class="expressionBox">
                 <div class="expressionInputBox" :class="{'afterInputLimit':showSmallFont,'beforeInputLimit':!showSmallFont}">
-                    {{expressionString}}
+                   <span style="vertical-align:text-bottom">{{expressionString}}</span>  
                 </div>
             </div>
         </div>
