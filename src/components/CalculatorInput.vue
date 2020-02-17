@@ -2,21 +2,24 @@
 <div>
     <div>
         {{label}}
+         <PopUp popUpText="press 'c' to open Calculator"></PopUp>
+
     </div>
     <div class="input-container" >
         <input  class="input-field"
                 type="text"
-                v-bind:value="inputFieldValue"
-                v-on:input="onInput"
+                :value="inputFieldValue"
+                @input="onInput"
+                :disabled="showCalculator"
                 @focus="isFieldFocused = true"
                 @blur="isFieldFocused = false"
-                :disabled="showCalculator"
                 @keyup.enter ="showCalculationResult">
         <i class="fa fa-calculator icon" @click="openCalculator"></i>
           <!-- <calculator v-if="showCalculator" class="popuptext" :defaultResultValue="calculatorValue" @closeBtnClicked="closeCalc" @calcEnterPressed="onCalcEnterPressed"></calculator> -->
 
 
-       <div  v-if="showCalculator" class="modal" :style="'z-index:'+zIndex+';'"> 
+       <div  v-if="showCalculator" class="modal" ref="modalBackground" :style="'z-index:'+zIndex+';'"> 
+            
           <calculator class="modal-content" :style="'top : '+modelContentY+';left: '+modelContentX+';'" :defaultResultValue="calculatorValue" @closeBtnClicked="closeCalc" @calcEnterPressed="onCalcEnterPressed"></calculator>
         </div>
     </div>
@@ -25,12 +28,15 @@
 </template>
 
 <script>
-import Calculator from './Calculator.vue'
+import Calculator from './Calculator.vue';
+import PopUp from './PopUp.vue'
+
 
 export default {
     props: ['label','value','zIndex'],
     components:{
         Calculator,
+        PopUp,
     },
     data(){
         return{
@@ -39,18 +45,28 @@ export default {
             operatorString:".,%*-+/",
             showCalculator:false,
             inputFieldValue:this.value,
-            modelContentX:0,
-            modelContentY:0,
+            modelContentX:"25%",
+            modelContentY:"25%",
         }
     },
     mounted(){
+        let self=this;
+        window.addEventListener("click", function(event) {
+           if(self.$refs.modalBackground === event.target)
+           {
+               self.showCalculator=false;
+           }
+        });
+
          window.addEventListener("keyup", e => {
-            if(!this.isFieldFocused)
+            if(this.isFieldFocused && e.key == 'c')
             {
-                return;
-            }
-            if (e.altKey && e.which == 67){
                 this.showCalculator=true;
+            }
+
+            if(this.showCalculator===true && e.key==='Escape')
+            {
+                this.showCalculator=false;
             }
         });
     },
@@ -61,6 +77,16 @@ export default {
                 return this.inputFieldValue.substring(1);
             }
             return this.inputFieldValue;
+        },
+        computedValue: {
+            get () {
+                return this.inputFieldValue;
+            },
+            set (val) {
+                console.log(val);
+                this.inputFieldValue = val;
+                this.$emit('input', this.inputFieldValue);
+            }
         }
     },
     watch: {
@@ -96,14 +122,7 @@ export default {
             {
                  this.inputFieldValue =	this.inputFieldValue.slice(0, -1);
             }
-
-            //to be discussed
-
-            // if( enteredCharacter === "=" && this.inputFieldValue[0]!== '=')
-            // {
-            //      this.inputFieldValue =	"="+this.inputFieldValue;
-            // }
-            this.$emit('input', this.inputFieldValue);
+            this.$emit('input',this.inputFieldValue);
         }
     },
     methods:{
@@ -153,7 +172,6 @@ export default {
 
         openCalculator(e)
         {
-            console.log(`x : ${e.x} y : ${e.y}`);
             this.modelContentX=e.x+"px";
             this.modelContentY=e.y+"px";
             this.showCalculator= true;

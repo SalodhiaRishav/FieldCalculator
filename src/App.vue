@@ -1,27 +1,15 @@
 <template>
   <div id="app">
-      Alt+c to open Calculator
-      <br>
-      Shift+s to confirm response
-      <CalculatorInput label="Calculation1" zIndex="1" v-model="someMass"/>
-      <CalculatorInput label="Calculation2" zIndex="1" v-model="someMass2"/>
+    <Home></Home>
   </div>
 </template>
 
 <script>
-import CalculatorInput from './components/CalculatorInput.vue'
-
+import Home from './components/Home.vue'
 export default {
   name: 'app',
-  components: {
-    CalculatorInput
-  },
-  data(){
-    return{
-      someMass:"12",
-      someMass2:"122",
-
-    }
+  components:{
+    Home,
   }
 }
 </script>
